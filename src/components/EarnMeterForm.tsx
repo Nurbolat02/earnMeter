@@ -3,31 +3,49 @@ import { useEarnMeter } from "../hooks/useEarnMeter";
 type Props = ReturnType<typeof useEarnMeter>;
 
 export function EarnMeterForm({
-  targetAmount, setTargetAmount,
-  hourlyRate, setHourlyRate,
-  selectedShifts, shiftOptions,
-  toggleShift, handleFieldChange, calculate,
-}: Pick<Props,
-  "targetAmount" | "setTargetAmount" |
-  "hourlyRate" | "setHourlyRate" |
-  "selectedShifts" | "shiftOptions" |
-  "toggleShift" | "handleFieldChange" | "calculate"
+  targetAmount,
+  setTargetAmount,
+  hourlyRate,
+  setHourlyRate,
+  selectedShifts,
+  shiftOptions,
+  toggleShift,
+  handleFieldChange,
+  calculate,
+}: Pick<
+  Props,
+  | "targetAmount"
+  | "setTargetAmount"
+  | "hourlyRate"
+  | "setHourlyRate"
+  | "selectedShifts"
+  | "shiftOptions"
+  | "toggleShift"
+  | "handleFieldChange"
+  | "calculate"
 >) {
   return (
     <form
-      onSubmit={(e) => { e.preventDefault(); calculate(); }}
+      onSubmit={(e) => {
+        e.preventDefault();
+        calculate();
+      }}
       className="form"
     >
       <input
         value={targetAmount ?? ""}
-        onChange={(e) => handleFieldChange(Number(e.target.value), setTargetAmount)}
+        onChange={(e) =>
+          handleFieldChange(Number(e.target.value), setTargetAmount)
+        }
         type="number"
         placeholder="Target amount"
         className="input"
       />
       <input
         value={hourlyRate ?? ""}
-        onChange={(e) => handleFieldChange(Number(e.target.value), setHourlyRate)}
+        onChange={(e) =>
+          handleFieldChange(Number(e.target.value), setHourlyRate)
+        }
         type="number"
         placeholder="Hourly rate"
         className="input"

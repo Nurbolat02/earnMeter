@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { distributeShifts } from "../utils/distributeShifts.tsx";
+import { distributeShifts } from "../utils/distributeShifts";
 
 const SHIFT_OPTIONS = [8, 10, 12, 14, 16];
 
@@ -9,17 +9,18 @@ export function useEarnMeter() {
   const [selectedShifts, setSelectedShifts] = useState<number[]>([]);
   const [shiftCounts, setShiftCounts] = useState<Record<number, number>>({});
   const [hoursToWork, setHoursToWork] = useState<number | null>(null);
-  const [actualHoursToWork, setActualHoursToWork] = useState<number | null>(
-    null,
-  );
   const [message, setMessage] = useState("");
   const [isCalculated, setIsCalculated] = useState(false);
 
-  function toggleShift(shift: number) {
-    setSelectedShifts((prev) =>
-      prev.includes(shift) ? prev.filter((s) => s !== shift) : [...prev, shift],
-    );
-  }
+  // производное значение — не состояние
+  const actualHoursToWork = isCalculated
+    ? Object.entries(shiftCounts).reduce(
+        (sum, [shift, count]) => sum + Number(shift) * count,
+        0,
+      )
+    : null;
+
+  // пересчёт при смене чекбоксов
 
   function handleFieldChange(
     value: number,
@@ -30,7 +31,7 @@ export function useEarnMeter() {
   }
 
   function validate(): string | null {
-    if (targetAmount === undefined || hourlyRate === undefined)
+    if (!targetAmount || !hourlyRate)
       return "Please input target amount and hourly rate";
     if (targetAmount <= 0 || hourlyRate <= 0)
       return "Please use only positive numbers more than 0";
@@ -48,14 +49,18 @@ export function useEarnMeter() {
 
     setMessage("");
     const required = Math.ceil(targetAmount! / hourlyRate!);
-    const { counts, totalHours } = distributeShifts(selectedShifts, required);
+    const { counts } = distributeShifts(selectedShifts, required);
 
     setHoursToWork(required);
     setShiftCounts(counts);
-    setActualHoursToWork(totalHours);
     setIsCalculated(true);
   }
 
+  function toggleShift(shift: number) {
+    setSelectedShifts((prev) =>
+      prev.includes(shift) ? prev.filter((s) => s !== shift) : [...prev, shift],
+    );
+  }
   return {
     targetAmount,
     setTargetAmount,
