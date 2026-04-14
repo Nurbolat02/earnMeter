@@ -1,0 +1,48 @@
+distributeShifts([8, 10, 12, 14, 16], 150)
+const counts = {}
+shifts.forEach((s) => (counts[s] = 0));
+//
+after this  shifts.forEach((s) => (counts[s] = 0)) counts will look like this
+counts = {
+    8:0,
+    10:0,
+    12:0,
+    14:0,
+    16:0
+}
+//
+const avgShift = shifts.reduce((sum, s) => sum + s, 0) / shifts.length;
+so avgShift = 60/5 = 12;
+const totalShifts = Math.ceil(target / avgShift);
+so totalShifts = 150/12 = 12,5 округляем в большую сторону = 13
+
+    for (let i = 0; i < totalShifts; i++) {
+      const shift = shifts[i % shifts.length];
+      counts[shift]++;
+    }
+
+so 
+    for (let i = 0; i < 13; i++) {
+      const shift = [8, 10, 12, 14, 16][0 % 5];
+      counts[shift]++;
+    }
+    shift = 8
+    {
+    8:0,
+    10:0,
+    12:0,
+    14:0,
+    16:0
+    }[8]++
+then
+    for (let i = 1; i < 13; i++) {
+      const shift = [8, 10, 12, 14, 16][1 % 5];
+      counts[shift]++;
+    }
+        {
+    8:1,
+    10:0,
+    12:0,
+    14:0,
+    16:0
+    }[10]++

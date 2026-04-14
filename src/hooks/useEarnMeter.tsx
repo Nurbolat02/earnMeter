@@ -1,0 +1,76 @@
+import { useState } from "react";
+import { distributeShifts } from "../utils/distributeShifts.tsx";
+
+const SHIFT_OPTIONS = [8, 10, 12, 14, 16];
+
+export function useEarnMeter() {
+  const [targetAmount, setTargetAmount] = useState<number>();
+  const [hourlyRate, setHourlyRate] = useState<number>();
+  const [selectedShifts, setSelectedShifts] = useState<number[]>([]);
+  const [shiftCounts, setShiftCounts] = useState<Record<number, number>>({});
+  const [hoursToWork, setHoursToWork] = useState<number | null>(null);
+  const [actualHoursToWork, setActualHoursToWork] = useState<number | null>(
+    null,
+  );
+  const [message, setMessage] = useState("");
+  const [isCalculated, setIsCalculated] = useState(false);
+
+  function toggleShift(shift: number) {
+    setSelectedShifts((prev) =>
+      prev.includes(shift) ? prev.filter((s) => s !== shift) : [...prev, shift],
+    );
+  }
+
+  function handleFieldChange(
+    value: number,
+    setter: React.Dispatch<React.SetStateAction<number | undefined>>,
+  ) {
+    setter(value);
+    setIsCalculated(false);
+  }
+
+  function validate(): string | null {
+    if (targetAmount === undefined || hourlyRate === undefined)
+      return "Please input target amount and hourly rate";
+    if (targetAmount <= 0 || hourlyRate <= 0)
+      return "Please use only positive numbers more than 0";
+    if (selectedShifts.length === 0)
+      return "Please choose length of shifts you would like to work";
+    return null;
+  }
+
+  function calculate() {
+    const error = validate();
+    if (error) {
+      setMessage(error);
+      return;
+    }
+
+    setMessage("");
+    const required = Math.ceil(targetAmount! / hourlyRate!);
+    const { counts, totalHours } = distributeShifts(selectedShifts, required);
+
+    setHoursToWork(required);
+    setShiftCounts(counts);
+    setActualHoursToWork(totalHours);
+    setIsCalculated(true);
+  }
+
+  return {
+    targetAmount,
+    setTargetAmount,
+    hourlyRate,
+    setHourlyRate,
+    selectedShifts,
+    shiftCounts,
+    setShiftCounts,
+    hoursToWork,
+    actualHoursToWork,
+    message,
+    isCalculated,
+    shiftOptions: SHIFT_OPTIONS,
+    toggleShift,
+    handleFieldChange,
+    calculate,
+  };
+}
