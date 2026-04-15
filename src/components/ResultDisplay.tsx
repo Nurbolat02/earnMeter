@@ -46,45 +46,177 @@ export function ResultDisplay({
               min={0}
               className="input"
               value={shiftCounts[shift] ?? ""}
+              // onChange={(e) => {
+              //   console.log("🔵 INPUT CHANGE");
+              //   console.log("Shift:", shift);
+              //   console.log("New value:", e.target.value);
+
+              //   setShiftCounts((prev) => {
+              //     console.log("\n🟡 PREV STATE:", prev);
+
+              //     const updated = {
+              //       ...prev,
+              //       [shift]: Number(e.target.value),
+              //     };
+
+              //     console.log("🟢 UPDATED (after input):", updated);
+
+              //     const target = hoursToWork ?? 0;
+              //     const MAX_OVERTIME = 16;
+
+              //     const total = calculateTotal(updated);
+
+              //     console.log("📊 TARGET:", target);
+              //     console.log("📊 TOTAL:", total);
+
+              //     // ======================
+              //     // 📉 ЕСЛИ НЕ ХВАТАЕТ
+              //     // ======================
+              //     if (total < target) {
+              //       console.log("⬇️ TOTAL < TARGET → START FILL");
+
+              //       let newTotal = total;
+
+              //       while (newTotal < target) {
+              //         console.log("\n🔁 LOOP FILL");
+              //         console.log("Current total:", newTotal);
+
+              //         const availableShifts = selectedShifts.filter(
+              //           (s) => s !== shift,
+              //         );
+
+              //         console.log("Available shifts:", availableShifts);
+
+              //         let best = availableShifts[0] ?? shift;
+              //         let minOver = Infinity;
+
+              //         for (const s of availableShifts) {
+              //           const over = newTotal + s - target;
+
+              //           console.log(`Trying shift ${s}: over =`, over);
+
+              //           if (over < minOver) {
+              //             minOver = over;
+              //             best = s;
+              //           }
+              //         }
+
+              //         console.log("✅ BEST SHIFT:", best);
+
+              //         updated[best] = (updated[best] ?? 0) + 1;
+              //         newTotal += best;
+
+              //         console.log("Updated counts:", updated);
+              //         console.log("New total:", newTotal);
+              //       }
+
+              //       console.log("✅ FINAL UPDATED (FILL):", updated);
+              //       return { ...updated };
+              //     }
+
+              //     // ======================
+              //     // 📈 ЕСЛИ ПЕРЕБОР
+              //     // ======================
+              //     if (total > target + MAX_OVERTIME) {
+              //       console.log("⬆️ TOTAL > LIMIT → START REDUCE");
+
+              //       let newTotal = total;
+
+              //       while (newTotal > target + MAX_OVERTIME) {
+              //         console.log("\n🔁 LOOP REDUCE");
+              //         console.log("Current total:", newTotal);
+
+              //         const availableShifts = selectedShifts.filter(
+              //           (s) => s !== shift,
+              //         );
+
+              //         console.log("Available shifts:", availableShifts);
+
+              //         const shiftToDecrease = availableShifts.find(
+              //           (s) => (updated[s] ?? 0) > 0,
+              //         );
+
+              //         console.log("Shift to decrease:", shiftToDecrease);
+
+              //         if (!shiftToDecrease) {
+              //           console.log("❌ NOTHING TO DECREASE → BREAK");
+              //           break;
+              //         }
+
+              //         updated[shiftToDecrease]--;
+              //         newTotal -= shiftToDecrease;
+
+              //         console.log("Updated counts:", updated);
+              //         console.log("New total:", newTotal);
+              //       }
+              //     }
+
+              //     const finalTotal = calculateTotal(updated);
+
+              //     console.log("\n🧾 FINAL TOTAL:", finalTotal);
+
+              //     if (finalTotal > target + MAX_OVERTIME) {
+              //       console.log("❌ TOO MUCH → REVERT");
+              //       return prev;
+              //     }
+
+              //     console.log("✅ FINAL STATE:", updated);
+
+              //     return { ...updated };
+              //   });
+              // }}
               onChange={(e) => {
+                // при событии изменения инпута мы отлавливаем событие и передаем его в функцию
+                // в теле функции мы обращаемся к методу изменения состояния ShiftCounts, что по сути является
+                // обьектом с возможными сменами и их колличеством
+                // обращаемся к предыдущему состоянию, создаем переменную в которую записываем предыдущее состояние
+                // + новое состояние, где ключ = акутальная смена, а значение = только что измененное значение
                 setShiftCounts((prev) => {
                   const updated = {
                     ...prev,
-                    [shift]: Math.max(0, Number(e.target.value)),
+                    [shift]: Number(e.target.value),
                   };
-
+                  // целью является сумма часов, которую нам необходима работать, если там 0 или undefined, то бери 0
+                  // Максимальная переработка больше необходимой суммы часов может быть 16
                   const target = hoursToWork ?? 0;
                   const MAX_OVERTIME = 16;
-
+                  // актуальная сумма часов = функция для подсчета + актуальны обьект со сменами и их количеством
                   const total = calculateTotal(updated);
-
+                  // если актуальная сумма меньше цели, то создаем новую сумму, которая равна актуальной сумме
                   if (total < target) {
                     let newTotal = total;
-
+                    // пока новая сумма меньше цели, мы будем пускать цикл работать
                     while (newTotal < target) {
+                      // перебираем доступные смены и убираем только ту, которую мы только что изменили(ее трогать нельзя)
                       const availableShifts = selectedShifts.filter(
                         (s) => s !== shift,
                       );
-
+                      // ну и просто берем самую первую смену и помечаем ее как "оптимальную"
+                      // создаем переменную которая будет показывать как мы близко от идеала, в начале она будет равна бексонечности
                       let best = availableShifts[0] ?? shift;
                       let minOver = Infinity;
-
+                      // проходим перебором по каждой доступной смене
+                      // инициализируем переменную которая будет показыать разницу между актуальной суммой + моментально перебираемая смен минус цель
+                      // Если полученное число меньше прошлого minOver, значит новый minOver = актуальному числу, а лучшая смена будет акутальной
                       for (const s of availableShifts) {
                         const over = newTotal + s - target;
 
-                        if (over >= 0 && over < minOver) {
+                        if (over < minOver) {
                           minOver = over;
                           best = s;
                         }
                       }
-
-                      updated[best] = (updated[best] ?? 0) + 1;
+                      //находим эту смену и увеличиваем ее количество на 1
+                      // а сумму увеличиваем на длительность этой смены
+                      updated[best] = updated[best] + 1;
                       newTotal += best;
                     }
-
+                    // возвращаем обновленный массив
                     return { ...updated };
-                  }
-                  if (total > target + MAX_OVERTIME) {
+                  } else if (total > target + MAX_OVERTIME) {
+                    // если актуальная сумма больше цели
+                    // то мы также создаем переменную для суммы
+                    // и пока сумма больше цели + 16 цикл будет работать
                     let newTotal = total;
 
                     while (newTotal > target + MAX_OVERTIME) {
@@ -92,14 +224,15 @@ export function ResultDisplay({
                         (s) => s !== shift,
                       );
 
-                      const biggest = Math.max(...availableShifts);
+                      // находим ПЕРВУЮ смену у которой есть count > 0
+                      const shiftToDecrease = availableShifts.find(
+                        (s) => (updated[s] ?? 0) > 0,
+                      );
 
-                      if ((updated[biggest] ?? 0) > 0) {
-                        updated[biggest]--;
-                        newTotal -= biggest;
-                      } else {
-                        break;
-                      }
+                      if (!shiftToDecrease) break;
+
+                      updated[shiftToDecrease]--;
+                      newTotal -= shiftToDecrease;
                     }
                   }
                   const finalTotal = calculateTotal(updated);
