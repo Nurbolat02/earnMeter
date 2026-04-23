@@ -29,7 +29,7 @@
 /* календарь */
 .calendar {
   display: grid;
-  grid-template-columns: repeat(7, minmax(120px, 1fr));
+  grid-template-columns: repeat(7, minmax(85px, 1fr));
   gap: 10px;
 }
 
@@ -149,4 +149,78 @@
 
 .close:hover {
   background: #020617;
+}
+.layout {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+/* LEFT */
+.planner {
+  flex: 1;
+  max-width: 700px;
+
+  background: #1e293b;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+/* RIGHT SIDEBAR */
+.sidebar {
+  width: 240px;
+
+  background: #1e293b;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.sidebarTitle {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #e2e8f0;
+}
+
+/* список */
+.summaryList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summaryItem {
+  display: flex;
+  justify-content: space-between;
+
+  font-size: 13px;
+  color: #94a3b8;
+
+  padding: 8px;
+  background: #334155;
+  border-radius: 10px;
+}
+.statsBox {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #334155;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.statRow {
+  display: flex;
+  justify-content: space-between;
+
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.good {
+  color: #22c55e;
+}
+
+.bad {
+  color: #f87171;
 }

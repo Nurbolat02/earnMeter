@@ -1,6 +1,7 @@
 import { EarnMeterForm } from "../components/EarnMeterForm";
 import { ResultDisplay } from "../components/ResultDisplay";
 import { useEarnMeter } from "../hooks/useEarnMeter";
+import { Link } from "react-router-dom";
 
 export default function Calculator() {
   const earnMeter = useEarnMeter();
@@ -13,6 +14,7 @@ export default function Calculator() {
 
       <div className="result">
         <ResultDisplay {...earnMeter} />
+        {earnMeter.isCalculated && <Link to="/planer">plan shifts</Link>}
       </div>
     </div>
   );

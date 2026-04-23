@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
-import Calculator from "./pages/calculator.tsx";
+import Calculator from "./pages/Calculator.tsx";
 import Planer from "./pages/Planer.tsx";
 
 function App() {
