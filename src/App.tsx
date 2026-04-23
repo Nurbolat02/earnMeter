@@ -1,23 +1,15 @@
-import { useEarnMeter } from "./hooks/useEarnMeter.tsx";
-import { EarnMeterForm } from "./components/EarnMeterForm.tsx";
-import { ResultDisplay } from "./components/ResultDisplay.tsx";
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
+import Calculator from "./pages/calculator.tsx";
+import Planer from "./pages/Planer.tsx";
 
 function App() {
-  const earnMeter = useEarnMeter();
-
   return (
     <div className="app">
-      <div className="card">
-        <h1 className="title">EarnMeter</h1>
-        <p className="subtitle">Calculate how many hours you need to work</p>
-
-        <EarnMeterForm {...earnMeter} />
-
-        <div className="result">
-          <ResultDisplay {...earnMeter} />
-        </div>
-      </div>
+      <Routes>
+        <Route path="/" element={<Calculator />} />
+        <Route path="planer" element={<Planer />} />
+      </Routes>
     </div>
   );
 }

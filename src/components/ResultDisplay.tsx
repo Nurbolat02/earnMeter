@@ -45,7 +45,7 @@ export function ResultDisplay({
               type="number"
               min={0}
               className="input"
-              value={shiftCounts[shift] ?? ""}
+              value={shiftCounts[shift] === 0 ? "" : shiftCounts[shift]}
               // onChange={(e) => {
               //   console.log("🔵 INPUT CHANGE");
               //   console.log("Shift:", shift);
@@ -166,20 +166,17 @@ export function ResultDisplay({
               //   });
               // }}
               onChange={(e) => {
-                // при событии изменения инпута мы отлавливаем событие и передаем его в функцию
-                // в теле функции мы обращаемся к методу изменения состояния ShiftCounts, что по сути является
-                // обьектом с возможными сменами и их колличеством
-                // обращаемся к предыдущему состоянию, создаем переменную в которую записываем предыдущее состояние
-                // + новое состояние, где ключ = акутальная смена, а значение = только что измененное значение
+                const value = e.target.value;
+
                 setShiftCounts((prev) => {
                   const updated = {
                     ...prev,
-                    [shift]: Number(e.target.value),
+                    [shift]: value === "" ? 0 : Number(value),
                   };
                   // целью является сумма часов, которую нам необходима работать, если там 0 или undefined, то бери 0
                   // Максимальная переработка больше необходимой суммы часов может быть 16
                   const target = hoursToWork ?? 0;
-                  const MAX_OVERTIME = 16;
+                  const MAX_OVERTIME = 8;
                   // актуальная сумма часов = функция для подсчета + актуальны обьект со сменами и их количеством
                   const total = calculateTotal(updated);
                   // если актуальная сумма меньше цели, то создаем новую сумму, которая равна актуальной сумме
