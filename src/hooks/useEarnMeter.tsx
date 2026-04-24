@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { distributeShifts } from "../utils/distributeShifts";
+import { useShift } from "./useShift";
 
 const SHIFT_OPTIONS = [8, 10, 12, 14, 16];
 
 export function useEarnMeter() {
-  const [targetAmount, setTargetAmount] = useState<number>();
+  const { shiftCounts, setShiftCounts, hoursToWork, setHoursToWork } =
+    useShift();
   const [hourlyRate, setHourlyRate] = useState<number>();
   const [selectedShifts, setSelectedShifts] = useState<number[]>([]);
-  const [shiftCounts, setShiftCounts] = useState<Record<number, number>>({});
-  const [hoursToWork, setHoursToWork] = useState<number | null>(null);
+  const [targetAmount, setTargetAmount] = useState<number | undefined>();
   const [message, setMessage] = useState("");
   const [isCalculated, setIsCalculated] = useState(false);
 

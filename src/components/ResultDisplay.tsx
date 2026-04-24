@@ -1,3 +1,4 @@
+import classes from "../pages/Calculator.module.css";
 type Props = {
   message: string;
   isCalculated: boolean;
@@ -28,23 +29,26 @@ export function ResultDisplay({
   const overtime = actualHoursToWork! - (hoursToWork ?? 0);
 
   return (
-    <div className="result-summary">
+    <div className={classes["result-summary"]}>
       <p>
         Required: <strong>{hoursToWork ?? 0}h</strong>
       </p>
       <p>
         Planned: <strong>{actualHoursToWork}h</strong>
-        {overtime > 0 && <span className="overtime"> (+{overtime}h)</span>}
       </p>
 
-      <div className="shift-counts">
+      <p>
+        Overtime: <span className={classes.overtime}> {overtime}h</span>
+      </p>
+
+      <div className={classes["shift-counts"]}>
         {selectedShifts.map((shift) => (
           <div key={shift}>
             <span>{shift}h shifts:</span>
             <input
               type="number"
               min={0}
-              className="input"
+              className={classes.input}
               value={shiftCounts[shift] === 0 ? "" : shiftCounts[shift]}
               // onChange={(e) => {
               //   console.log("🔵 INPUT CHANGE");

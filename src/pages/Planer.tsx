@@ -1,29 +1,62 @@
+import { useShift } from "../hooks/useShift";
 import classes from "./Planer.module.css";
 import { useState } from "react";
 
 export default function Planer() {
   const [activeDay, setActiveDay] = useState<number | null>(null);
-
+  const [daysToWork, setDaysToWork] = useState<Record<number, number | null>>(
+    {},
+  );
+  const { shiftCounts, hoursToWork } = useShift();
+  const [copyShiftCounts, setCopyShiftCounts] = useState(shiftCounts);
   const now = new Date();
-
   const year = now.getFullYear();
   const month = now.getMonth();
+  const daysInMonth = getDaysInMonth(year, month);
+  function getShiftTime(hours: number) {
+    if (hours === 0) {
+      return "Day off";
+    } else {
+      const end = 24;
+      const start = end - hours;
 
-  // 🔥 MOCK данных (потом заменишь на свой earnMeter)
-  const targetHours = 160; // например, из калькулятора потом придёт
-
-  const shiftSummary = [
-    { hours: 16, count: 8 },
-    { hours: 8, count: 4 },
-    { hours: 12, count: 2 },
-  ];
-
-  // 📊 считаем фактические часы
+      return `${start}:00–${end}:00`;
+    }
+  }
   function calculateActualTotal() {
-    return shiftSummary.reduce((sum, item) => sum + item.hours * item.count, 0);
+    return Object.entries(shiftCounts).reduce(
+      (sum, [shift, count]) => sum + Number(shift) * count,
+      0,
+    );
+  }
+
+  function isNumber(val: any) {
+    return val === +val;
   }
 
   const actualHours = calculateActualTotal();
+
+  function handleSelectShift(value: number) {
+    if (!activeDay) return;
+    if (value === 0) {
+      setDaysToWork((prev) => ({
+        ...prev,
+        [activeDay]: 0,
+      }));
+      setActiveDay(null);
+      return;
+    }
+    setDaysToWork((prev) => ({
+      ...prev,
+      [activeDay]: value,
+    }));
+    setCopyShiftCounts((prev) => ({
+      ...prev,
+      [value]: prev[value] - 1,
+    }));
+
+    setActiveDay(null);
+  }
 
   function getDaysInMonth(year: number, month: number) {
     return new Date(year, month + 1, 0).getDate();
@@ -34,7 +67,6 @@ export default function Planer() {
   }
 
   function buildCalendar(year: number, month: number) {
-    const daysInMonth = getDaysInMonth(year, month);
     const startOffset = getStartOffset(year, month);
 
     const result: (number | null)[] = [];
@@ -80,12 +112,18 @@ export default function Planer() {
               <div key={index} className={classes.day}>
                 <div className={classes.date}>{day}</div>
 
-                <div
-                  className={classes.addEvent}
-                  onClick={() => setActiveDay(day)}
-                >
-                  +
-                </div>
+                {daysToWork[day] || daysToWork[day] === 0 ? (
+                  <div className={classes.shiftTime}>
+                    {getShiftTime(daysToWork[day]!)}
+                  </div>
+                ) : (
+                  <div
+                    className={classes.addEvent}
+                    onClick={() => setActiveDay(day)}
+                  >
+                    +
+                  </div>
+                )}
               </div>
             );
           })}
@@ -97,11 +135,11 @@ export default function Planer() {
         <h3 className={classes.sidebarTitle}>Shift summary</h3>
 
         <div className={classes.summaryList}>
-          {shiftSummary.map((item) => (
-            <div key={item.hours} className={classes.summaryItem}>
-              <span>{item.count}x</span>
-              <span>{item.hours}h</span>
-              <span>{item.count * item.hours}h</span>
+          {Object.entries(copyShiftCounts).map(([shift, count]) => (
+            <div key={shift} className={classes.summaryItem}>
+              <span>{shift}h</span>
+              <span>{count}x</span>
+              {/* <span>{Number(shift) * count}h</span> */}
             </div>
           ))}
         </div>
@@ -110,7 +148,7 @@ export default function Planer() {
         <div className={classes.statsBox}>
           <div className={classes.statRow}>
             <span>Target</span>
-            <span>{targetHours}h</span>
+            <span>{hoursToWork}h</span>
           </div>
 
           <div className={classes.statRow}>
@@ -119,39 +157,50 @@ export default function Planer() {
           </div>
 
           <div className={classes.statRow}>
-            <span>Diff</span>
+            <span>Overtime</span>
             <span
               className={
-                actualHours >= targetHours ? classes.good : classes.bad
+                actualHours >= hoursToWork! ? classes.good : classes.bad
               }
             >
-              {actualHours - targetHours}h
+              {actualHours - hoursToWork!}h
             </span>
           </div>
         </div>
       </div>
       {/* MODAL */}
-      {activeDay && (
-        <div
-          className={classes.modalOverlay}
-          onClick={() => setActiveDay(null)}
-        >
-          <div className={classes.modal} onClick={(e) => e.stopPropagation()}>
-            <h3>Day {activeDay}</h3>
+      <div
+        className={`${classes.modalOverlay} ${activeDay ? classes.open : ""}`}
+        onClick={() => setActiveDay(null)}
+      >
+        <div className={classes.modal} onClick={(e) => e.stopPropagation()}>
+          {activeDay && <h3 className={classes.modalTitle}>Day {activeDay}</h3>}
 
-            <button>8h shift</button>
-            <button>12h shift</button>
-            <button className={classes.off}>Day off</button>
-
-            <button
-              className={classes.close}
-              onClick={() => setActiveDay(null)}
+          <div className={classes.modalContent}>
+            {Object.keys(copyShiftCounts).map((shift) => {
+              if (copyShiftCounts[Number(shift)] <= 0) return;
+              return (
+                <div
+                  className={classes.option}
+                  onClick={() => handleSelectShift(+shift)}
+                >
+                  {shift}h shift
+                </div>
+              );
+            })}
+            <div
+              className={`${classes.option} ${classes.off}`}
+              onClick={() => handleSelectShift(0)}
             >
-              Close
-            </button>
+              Day off
+            </div>
           </div>
+
+          <button className={classes.close} onClick={() => setActiveDay(null)}>
+            Close
+          </button>
         </div>
-      )}
+      </div>
     </div>
   );
 }

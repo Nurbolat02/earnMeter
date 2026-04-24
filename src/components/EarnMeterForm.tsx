@@ -1,10 +1,11 @@
 import { useEarnMeter } from "../hooks/useEarnMeter";
+import { useShift } from "../hooks/useShift";
+import classes from "../pages/Calculator.module.css";
 
 type Props = ReturnType<typeof useEarnMeter>;
 
 export function EarnMeterForm({
   targetAmount,
-  setTargetAmount,
   hourlyRate,
   setHourlyRate,
   selectedShifts,
@@ -12,10 +13,10 @@ export function EarnMeterForm({
   toggleShift,
   handleFieldChange,
   calculate,
+  setTargetAmount,
 }: Pick<
   Props,
   | "targetAmount"
-  | "setTargetAmount"
   | "hourlyRate"
   | "setHourlyRate"
   | "selectedShifts"
@@ -23,6 +24,7 @@ export function EarnMeterForm({
   | "toggleShift"
   | "handleFieldChange"
   | "calculate"
+  | "setTargetAmount"
 >) {
   return (
     <form
@@ -30,30 +32,32 @@ export function EarnMeterForm({
         e.preventDefault();
         calculate();
       }}
-      className="form"
+      className={classes.form}
     >
       <input
-        value={targetAmount ?? ""}
+        value={targetAmount === 0 ? "" : targetAmount}
         onChange={(e) =>
           handleFieldChange(Number(e.target.value), setTargetAmount)
         }
         type="number"
         placeholder="Target amount"
-        className="input"
+        className={classes.input}
       />
+
       <input
-        value={hourlyRate ?? ""}
+        value={hourlyRate === 0 ? "" : hourlyRate}
         onChange={(e) =>
           handleFieldChange(Number(e.target.value), setHourlyRate)
         }
         type="number"
         placeholder="Hourly rate"
-        className="input"
+        className={classes.input}
       />
 
-      <div className="shifts">
+      <div className={classes.shifts}>
         <h3>Select shifts</h3>
-        <div className="shift-options">
+
+        <div className={classes["shift-options"]}>
           {shiftOptions.map((shift) => (
             <label key={shift}>
               <input
@@ -67,7 +71,7 @@ export function EarnMeterForm({
         </div>
       </div>
 
-      <button className="button">Calculate</button>
+      <button className={classes.button}>Calculate</button>
     </form>
   );
 }
