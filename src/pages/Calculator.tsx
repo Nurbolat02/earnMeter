@@ -6,7 +6,7 @@ import classes from "./Calculator.module.css";
 
 export default function Calculator() {
   const earnMeter = useEarnMeter();
-
+  // govno iz zopy
   return (
     <div className={classes.card}>
       <h1 className={classes.title}>EarnMeter</h1>
