@@ -5,7 +5,7 @@ export default function Calculator() {
   const [selectedShifts, setSelectedShifts] = useState<number[]>([]);
   const [desiredSalary, setDesiredSalary] = useState<number | undefined>();
   const [hourlyRate, setHourlyRate] = useState<number | undefined>();
-
+  // da nu nachuj
   function toggleShift(shift: number, checked: boolean) {
     setSelectedShifts((prev) => {
       if (checked) {
