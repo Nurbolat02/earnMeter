@@ -164,3 +164,55 @@
 a {
   text-decoration: none;
 }
+.shift-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.shift-options label {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 48px;
+
+  background: #334155;
+  border: 1px solid #475569;
+  border-radius: 10px;
+
+  cursor: pointer;
+  user-select: none;
+
+  font-size: 14px;
+  font-weight: 600;
+  color: #e2e8f0;
+
+  transition: all 0.2s ease;
+}
+
+.shift-options label:hover {
+  background: #475569;
+  border-color: #64748b;
+}
+
+.shift-options input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.shift-options input:checked + span {
+  color: white;
+}
+
+.shift-options label:has(input:checked) {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.35);
+}
+
+.shift-options label:active {
+  transform: scale(0.97);
+}
