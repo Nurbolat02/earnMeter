@@ -2,19 +2,19 @@ import { useState } from "react";
 import classes from "./Calculator.module.css";
 
 export default function Calculator() {
+  const [hourlyRate, setHourlyRate] = useState<number>();
+  const [desiredSalary, setDesiredSalary] = useState<number>();
   const [selectedShifts, setSelectedShifts] = useState<number[]>([]);
-  const [desiredSalary, setDesiredSalary] = useState<number | undefined>();
-  const [hourlyRate, setHourlyRate] = useState<number | undefined>();
-  // da nu nachuj
+  const [shiftsForMonth, setShiftsForMonts] = useState<Record<number, number>>(
+    {},
+  );
+  const AVAILABLESHIFTLENGTHS: number[] = [8, 10, 12, 14, 16];
   function toggleShift(shift: number, checked: boolean) {
     setSelectedShifts((prev) => {
       if (checked) {
         return [...prev, shift];
       }
-
-      return prev.filter(
-        (currentlyIteratedShift) => currentlyIteratedShift !== shift,
-      );
+      return prev.filter((s) => s !== shift);
     });
   }
   function changeStateThrouInput(
@@ -27,20 +27,26 @@ export default function Calculator() {
     }
   }
   function calculateShiftPlan() {
-    if (
-      desiredSalary === undefined ||
-      hourlyRate === undefined ||
-      selectedShifts === undefined
-    ) {
-      alert(
-        "You need to inset your desired sallary, horly rate and desired shifts",
-      );
+    if (!desiredSalary || !hourlyRate) {
       return;
     }
-    const hoursToWork = desiredSalary / hourlyRate;
-  }
+    if (selectedShifts.length === 0) return;
+    const result: Record<number, number> = {};
 
-  const availableShiftLengths = [8, 12, 14, 16];
+    let totalHours = 0;
+    let index = 0;
+
+    while (
+      totalHours < Math.floor(Number(desiredSalary) / Number(hourlyRate))
+    ) {
+      const shift = selectedShifts[index];
+      result[shift] = (result[shift] ?? 0) + 1;
+      totalHours += shift;
+
+      index = (index + 1) % selectedShifts.length;
+    }
+    setShiftsForMonts(result);
+  }
   return (
     <div className={classes.wrapper}>
       <div className={classes.card}>
@@ -53,29 +59,31 @@ export default function Calculator() {
         <div className={classes.form}>
           <input
             className={classes.input}
-            value={desiredSalary == 0 ? "" : desiredSalary}
-            onChange={(e) => {
-              changeStateThrouInput(e, setDesiredSalary);
-            }}
             placeholder="Expected salary"
+            value={desiredSalary ?? ""}
+            onChange={(event) => {
+              changeStateThrouInput(event, setDesiredSalary);
+            }}
           />
 
           <input
             className={classes.input}
-            value={hourlyRate == 0 ? "" : hourlyRate}
-            onChange={(e) => {
-              changeStateThrouInput(e, setHourlyRate);
-            }}
             placeholder="Hourly rate"
+            value={hourlyRate ?? ""}
+            onChange={(event) => {
+              changeStateThrouInput(event, setHourlyRate);
+            }}
           />
 
           <div className={classes["shift-options"]}>
-            {availableShiftLengths.map((element) => {
+            {AVAILABLESHIFTLENGTHS.map((element, index) => {
               return (
-                <label>
+                <label key={index}>
                   <input
                     type="checkbox"
-                    onChange={(e) => toggleShift(element, e.target.checked)}
+                    onChange={(event) => {
+                      toggleShift(element, event.target.checked);
+                    }}
                   />
                   <span>{element}h</span>
                 </label>
@@ -85,15 +93,32 @@ export default function Calculator() {
 
           <button
             className={classes.button}
-            onClick={() => calculateShiftPlan()}
+            onClick={() => {
+              calculateShiftPlan();
+            }}
           >
             Calculate
           </button>
         </div>
 
-        <div className={classes.result}>
-          <p>Result will appear here</p>
-        </div>
+        {Object.keys(shiftsForMonth).length > 0 && (
+          <div className={classes.result}>
+            <h3>Shift plan</h3>
+
+            {Object.entries(shiftsForMonth).map(([shiftLength, shiftCount]) => {
+              return (
+                <div className={classes.shiftRow} key={shiftLength}>
+                  <div>{shiftLength}h shift</div>
+
+                  <input
+                    className={classes.shiftInput}
+                    value={shiftCount ? shiftCount : ""}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -216,3 +216,17 @@ a {
 .shift-options label:active {
   transform: scale(0.97);
 }
+.shiftRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  margin-bottom: 8px;
+}
+
+.shiftInput {
+  width: 45px;
+  height: 30px;
+  text-align: center;
+}
