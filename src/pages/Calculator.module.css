@@ -230,3 +230,46 @@ a {
   height: 30px;
   text-align: center;
 }
+.summary {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.summaryRow:last-child {
+  border-bottom: none;
+}
+
+.summaryRow span:last-child {
+  font-weight: 600;
+}
+.nextStep {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.nextStepText {
+  margin: 0;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.nextStep .button {
+  width: 100%;
+  text-align: center;
+}

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import classes from "./Calculator.module.css";
-import { Link } from "react-router";
 
 export default function Calculator() {
   const [hourlyRate, setHourlyRate] = useState<string>("");
@@ -10,6 +9,13 @@ export default function Calculator() {
     {},
   );
   const AVAILABLESHIFTLENGTHS: number[] = [8, 10, 12, 14, 16];
+
+  // toggleShift
+  // принимает смену (число) и состояние чекд (булин)
+  // обращаемся к функции изменения состояния selectedShifts,
+  // передаем предыдущее состояние и проверяем состоянек чекд.
+  // Если оно правдиво, тогда добавляем переданную смену
+  // к нашему состоянию selectedShifts, иначе наборото удаляем переданную смену из нашего стейта
   function toggleShift(shift: number, checked: boolean) {
     setSelectedShifts((prev) => {
       if (checked) {
@@ -19,6 +25,10 @@ export default function Calculator() {
       }
     });
   }
+  // changeStateThrouInput
+  // передаем ему событие, передаем функцию для изменения состояния
+  // обращаемя к событию, достаем из него влью и записываем в переменную
+  // проверяем если валью является числом и только после этого передаем его в функцию для изменения состояния
   function changeStateThrouInput(
     event: React.ChangeEvent<HTMLInputElement>,
     setStateFunction: React.Dispatch<React.SetStateAction<string>>,
@@ -27,6 +37,15 @@ export default function Calculator() {
     if (!/^\d*$/.test(value)) return;
     setStateFunction(value);
   }
+  // changeShiftsForMonth
+  // передаем длину смены и количество эимх смен
+  // инициализируем переменную в которую будем записвать новый массив со доступынми сменами кроме той, кто сейчас редактирует юзер
+  // инициализируем переменную в которую поместим количество часов, которое нам нужно отработать
+  //  инициализируем обьект в который сразу поместим только что измнененную смены юзером
+  // Инициализируем переменную, которая будет служить аккамулятором для отработанных часов И этот аккамулятор должен быть меньше чем необходимое количество отработанных часов ОДНОВРЕМЕННО с тем, что длина массива смен должна быть больше 0 (не быть пустой)
+  // в обьект Результаты мы инициализируеи переменную для каждой актуально перебираемой смены (это просто число) и проверяем, если ли в обьекте результат уже данная смена.Если нет, то мы запишем туда 0, если есть, то прибавим к ней 1, а потом увеличим общее количество отработанных часов на эту 1 смену
+  // не забываем сдвигать индекс таким образом, чтобы он ходил по кругу
+  // В конце полученный результат передам в функцию для изменения состояния смен на месяц
   function countShifts(
     result: Record<number, number>,
     selectedShifts: number[],
@@ -53,6 +72,8 @@ export default function Calculator() {
     const result: Record<number, number> = { [shiftLength]: shiftCount };
 
     const sumOfWorkedHours = shiftLength * shiftCount;
+    // let sumOfWorkedHours = shiftLength * shiftCount;
+    // let index = 0;
     countShifts(
       result,
       objWithNewShifts,
@@ -61,7 +82,10 @@ export default function Calculator() {
       setShiftsForMonts,
     );
   }
-
+  // calculateShiftPlan
+  // проверяем чтобы перемнные с зп в час и желаемой зп в месяц имели внутри себя значения
+  // Также проверяем чтобы длина масива с выбранными сменами не была равна нулю (не была пустой)
+  // далее решаем также, как выше
   function calculateShiftPlan() {
     if (!desiredSalary || !hourlyRate || selectedShifts.length === 0) return;
     const targetHours = Math.floor(Number(desiredSalary) / Number(hourlyRate));
@@ -179,9 +203,12 @@ export default function Calculator() {
                   calendar.
                 </p>
 
-                <Link className={classes.button} to="/planer">
+                <button
+                  className={classes.button}
+                  // onClick={() => navigate("/calendar")}
+                >
                   Plan shifts in calendar
-                </Link>
+                </button>
               </div>
             </div>
           </>
