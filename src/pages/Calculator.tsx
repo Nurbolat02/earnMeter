@@ -44,6 +44,7 @@ export default function Calculator() {
       index = (index + 1) % selectedShifts.length;
     }
     setStateFunction(result);
+    localStorage.setItem("shiftPlan", JSON.stringify(result));
   }
   function changeShiftsForMonth(shiftLength: number, shiftCount: number) {
     const objWithNewShifts: number[] = selectedShifts.filter(

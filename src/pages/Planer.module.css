@@ -1,7 +1,8 @@
 .layout {
   display: flex;
   gap: 20px;
-  align-items: center;
+  align-items: flex-start;
+  padding: 40px;
 }
 
 .planner {
@@ -42,12 +43,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
   transition: 0.2s;
 }
 
 .day:hover {
   background: #475569;
-  scale: 1.1;
+  scale: 1.05;
 }
 
 .date {
@@ -56,4 +58,183 @@
   right: 8px;
   font-size: 12px;
   color: #94a3b8;
+}
+
+.shiftTime {
+  font-size: 11px;
+  color: #38bdf8;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.delete {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.6);
+  background: rgba(255, 59, 48, 0.15);
+  backdrop-filter: blur(6px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.25s ease;
+}
+
+.deleteIcon {
+  font-size: 14px;
+  font-weight: 900;
+  color: #ff3b30;
+}
+
+.day:hover .delete {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.delete:hover {
+  transform: scale(1.15);
+}
+
+/* САЙДБАР */
+.sidebar {
+  width: 220px;
+  background: #1e293b;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebarTitle {
+  font-size: 16px;
+  color: #e2e8f0;
+  margin: 0;
+}
+
+.summaryList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summaryItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #94a3b8;
+  padding: 8px 12px;
+  background: #334155;
+  border-radius: 10px;
+}
+
+.allDone {
+  text-align: center;
+  color: #4ade80;
+  font-size: 14px;
+  padding: 16px 0;
+}
+
+/* МОДАЛКА */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modalTitle {
+  text-align: center;
+  font-size: 18px;
+  color: #e2e8f0;
+  margin: 0;
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option {
+  padding: 10px;
+  border-radius: 8px;
+  background: #334155;
+  text-align: center;
+  color: #e2e8f0;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.option:hover {
+  background: #475569;
+}
+
+.off {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+.off:hover {
+  background: #991b1b;
+}
+
+.close {
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  background: #0f172a;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.close:hover {
+  background: #020617;
+}
+.saveButton {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #4ade80;
+  color: #0f172a;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.saveButton:hover {
+  background: #22c55e;
 }
